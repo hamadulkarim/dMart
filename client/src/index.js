@@ -4,22 +4,17 @@ import './index.css'
 import router from './utils/router.js'
 import { RouterProvider } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals'
-import { AuthProvider } from './utils/context/AuthContext'
 import { Toaster } from 'react-hot-toast'
-import { SearchProvider } from './utils/context/SearchContext'
-import { CartProvider } from './utils/context/CartContext.jsx'
+import store from './app/store.js'
+import { Provider } from 'react-redux'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    <AuthProvider>
+    <Provider store={store}>
       <Toaster />
-      <SearchProvider>
-        <CartProvider>
-          <RouterProvider router={router} />
-        </CartProvider>
-      </SearchProvider>
-    </AuthProvider>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 )
 
