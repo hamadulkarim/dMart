@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../utils/context/AuthContext'
 import toast from 'react-hot-toast'
 import { updateUserProfile } from '../../utils/dmart-api'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectAuth, setAuth } from '../../app/slices/auth/authSlice'
+
 const Profile = () => {
-  //context
-  const { auth, setAuth } = useAuth()
-  //state
+  const dispatch = useDispatch()
+
+  const auth = useSelector(selectAuth)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,7 +37,7 @@ const Profile = () => {
       if (data?.error) {
         toast.error(data.error)
       } else {
-        setAuth({ ...auth, user: data?.updatedUser })
+        dispatch(setAuth({ ...auth, user: data?.updatedUser }))
         let ls = localStorage.getItem('auth')
         ls = JSON.parse(ls)
         ls.user = data.updatedUser
@@ -50,63 +52,63 @@ const Profile = () => {
   }
   return (
     <>
-      <div className='form-container '>
+      <div className="form-container ">
         <form onSubmit={handleSubmit}>
-          <h4 className='title'>USER PROFILE</h4>
-          <div className='mb-3'>
+          <h4 className="title">USER PROFILE</h4>
+          <div className="mb-3">
             <input
-              type='text'
+              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='form-control'
-              id='exampleInputName'
-              placeholder='Enter Your Name'
+              className="form-control"
+              id="exampleInputName"
+              placeholder="Enter Your Name"
               autoFocus
             />
           </div>
-          <div className='mb-3'>
+          <div className="mb-3">
             <input
-              type='email'
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className='form-control'
-              id='exampleInputEmail'
-              placeholder='Enter Your Email '
+              className="form-control"
+              id="exampleInputEmail"
+              placeholder="Enter Your Email "
               disabled
             />
           </div>
-          <div className='mb-3'>
+          <div className="mb-3">
             <input
-              type='password'
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className='form-control'
-              id='exampleInputPassword1'
-              placeholder='Enter Your Password'
+              className="form-control"
+              id="exampleInputPassword1"
+              placeholder="Enter Your Password"
             />
           </div>
-          <div className='mb-3'>
+          <div className="mb-3">
             <input
-              type='text'
+              type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className='form-control'
-              id='exampleInputPhone'
-              placeholder='Enter Your Phone'
+              className="form-control"
+              id="exampleInputPhone"
+              placeholder="Enter Your Phone"
             />
           </div>
-          <div className='mb-3'>
+          <div className="mb-3">
             <input
-              type='text'
+              type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className='form-control'
-              id='exampleInputAddress'
-              placeholder='Enter Your Address'
+              className="form-control"
+              id="exampleInputAddress"
+              placeholder="Enter Your Address"
             />
           </div>
 
-          <button type='submit' className='btn btn-primary'>
+          <button type="submit" className="btn btn-primary">
             UPDATE
           </button>
         </form>

@@ -1,18 +1,25 @@
 import React from 'react'
-import { useCart } from '../utils/context/CartContext'
-import { useAuth } from '../utils/context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { createOrder } from '../utils/dmart-api'
 import toast from 'react-hot-toast'
 import { deleteItemFromLocal } from '../utils/local-storage-utils'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectAuth } from '../app/slices/auth/authSlice'
+import {
+  removeCartItem,
+  selectCartItems,
+  selectTotalPrice,
+} from '../app/slices/cart/cartSlice'
 
 const CartPage = () => {
-  const { auth } = useAuth()
-  const { cart, removeCartItem, totalPrice } = useCart()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const auth = useSelector(selectAuth)
+  const cart = useSelector(selectCartItems)
+  const totalPrice = useSelector(selectTotalPrice)
 
   const amountInUSDString = () =>
-    totalPrice().toLocaleString('en-US', {
+    totalPrice.toLocaleString('en-US', {
       style: 'currency',
       currency: 'USD',
     })
@@ -27,7 +34,7 @@ const CartPage = () => {
       const orderData = {
         products: orderProducts,
         buyer: auth?.user?._id,
-        amount: totalPrice(),
+        amount: totalPrice,
       }
 
       const response = await createOrder(orderData)
@@ -46,13 +53,13 @@ const CartPage = () => {
   }
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col-md-12'>
-          <h1 className='text-center bg-light p-2 mb-1'>
+    <div className="container">
+      <div className="row">
+        <div className="col-md-12">
+          <h1 className="text-center bg-light p-2 mb-1">
             {`Hello ${auth?.token && auth?.user?.name}`}
           </h1>
-          <h4 className='text-center'>
+          <h4 className="text-center">
             {cart?.length
               ? `You Have ${cart.length} items in your cart ${
                   auth?.token ? '' : 'please login to checkout'
@@ -61,29 +68,29 @@ const CartPage = () => {
           </h4>
         </div>
       </div>
-      <div className='row'>
-        <div className='col-md-8'>
+      <div className="row">
+        <div className="col-md-8">
           {cart?.map((p, index) => (
             <div
               key={`${index}_${p._id}`}
-              className='row mb-2 p-3 card flex-row'
+              className="row mb-2 p-3 card flex-row"
             >
-              <div className='col-md-4'>
+              <div className="col-md-4">
                 <img
                   src={`${process.env.REACT_APP_DMART_API_URL}/products/product-photo/${p._id}`}
-                  className='card-img-top'
+                  className="card-img-top"
                   alt={p.name}
-                  width='100px'
+                  width="100px"
                   height={'100px'}
                 />
               </div>
-              <div className='col-md-8'>
+              <div className="col-md-8">
                 <p>{p.name}</p>
                 <p>{p.description.substring(0, 30)}</p>
                 <p>Price : {p.price}</p>
                 <button
-                  className='btn btn-danger'
-                  onClick={() => removeCartItem(p._id)}
+                  className="btn btn-danger"
+                  onClick={() => dispatch(removeCartItem(p._id))}
                 >
                   Remove
                 </button>
@@ -91,43 +98,42 @@ const CartPage = () => {
             </div>
           ))}
         </div>
-        <div className='col-md-4 text-center'>
+        <div className="col-md-4 text-center">
           <h2>Cart Summary</h2>
           <p>Total | Checkout | Payment</p>
           <hr />
           <h4>Total : {amountInUSDString()} </h4>
           {auth?.user?.address ? (
             <>
-              <div className='mb-3'>
+              <div className="mb-3">
                 <h4>Current Address</h4>
                 <h5>{auth?.user?.address}</h5>
                 <button
-                  className='btn btn-outline-warning'
+                  className="btn btn-outline-warning"
                   onClick={() => navigate('/dashboard/user/profile')}
                 >
                   Update Address
                 </button>
                 <button
-                  className='btn btn-outline-warning'
+                  className="btn btn-outline-warning"
                   onClick={handleCheckout}
                 >
                   Checkout
                 </button>
-                {/* <Link to={'/dashboard/checkout/payment-details'}>Checkout</Link> */}
               </div>
             </>
           ) : (
-            <div className='mb-3'>
+            <div className="mb-3">
               {auth?.token ? (
                 <button
-                  className='btn btn-outline-warning'
+                  className="btn btn-outline-warning"
                   onClick={() => navigate('/dashboard/user/profile')}
                 >
                   Update Address
                 </button>
               ) : (
                 <button
-                  className='btn btn-outline-warning'
+                  className="btn btn-outline-warning"
                   onClick={() =>
                     navigate('/login', {
                       state: '/cart',

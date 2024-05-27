@@ -1,10 +1,11 @@
 import React from 'react'
-import { useAuth } from '../../utils/context/AuthContext'
+import { useSelector } from 'react-redux'
+import { selectAuth } from '../../app/slices/auth/authSlice'
 
 const AdminDashboard = () => {
-  const { auth } = useAuth()
+  const auth = useSelector(selectAuth)
   return (
-    <div className='card w-75 p-3'>
+    <div className="card w-75 p-3">
       <h3>Admin Name: {auth?.user?.name}</h3>
       <h3>Admin Email: {auth?.user?.email}</h3>
       <h3>Admin Contect: {auth?.user?.phone}</h3>

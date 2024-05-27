@@ -1,16 +1,22 @@
 import React from 'react'
-import { useSearch } from '../../utils/context/SearchContext'
 import { useNavigate } from 'react-router-dom'
 import { searchProducts } from '../../utils/dmart-api'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  selectValues,
+  setResults,
+  setKeyword,
+} from '../../app/slices/search/searchSlice'
 const SearchInput = () => {
-  const [values, setValues] = useSearch()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const values = useSelector(selectValues)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const { data } = await searchProducts(values.keyword)
-      setValues({ ...values, results: data })
+      dispatch(setResults(data))
       navigate('/search')
     } catch (error) {
       console.log(error)
@@ -18,16 +24,16 @@ const SearchInput = () => {
   }
   return (
     <div>
-      <form className='d-flex' role='search' onSubmit={handleSubmit}>
+      <form className="d-flex" role="search" onSubmit={handleSubmit}>
         <input
-          className='form-control me-2'
-          type='search'
-          placeholder='Search'
-          aria-label='Search'
+          className="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
           value={values.keyword}
-          onChange={(e) => setValues({ ...values, keyword: e.target.value })}
+          onChange={(e) => dispatch(setKeyword(e.target.value))}
         />
-        <button className='btn btn-outline-success' type='submit'>
+        <button className="btn btn-outline-success" type="submit">
           Search
         </button>
       </form>
